@@ -1,0 +1,17 @@
+package com.project.lovable.service;
+
+import com.project.lovable.dto.member.InviteMemberRequest;
+import com.project.lovable.dto.member.MemberResponse;
+import com.project.lovable.dto.member.UpdateMemberRoleRequest;
+
+import java.util.List;
+
+public interface ProjectMemberService {
+    List<MemberResponse> getProjectMembers(Long projectId, Long userId);
+
+    MemberResponse inviteMember(Long projectId, InviteMemberRequest request, Long userId);
+
+    MemberResponse updateMemberRole(Long projectId, Long memberId, UpdateMemberRoleRequest request, Long userId);
+
+    void removeProjectMember(Long projectId, Long memberId, Long userId);
+}
