@@ -1,5 +1,25 @@
 package com.project.lovable.enums;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
+
+import static com.project.lovable.enums.ProjectPermission.*;
+
+@RequiredArgsConstructor
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ProjectRole {
-    EDITOR, VIEWER, OWNER
+    EDITOR(VIEW, EDIT, DELETE, VIEW_MEMBER),
+    VIEWER(VIEW, VIEW_MEMBER),
+    OWNER(Set.of(VIEW, EDIT, DELETE, VIEW_MEMBER, MANAGE_MEMBER));
+
+    ProjectRole(ProjectPermission... permissions) {
+        this.permissions = Set.of(permissions);
+    }
+
+    Set<ProjectPermission> permissions;
 }

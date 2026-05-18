@@ -1,5 +1,6 @@
 package com.project.lovable.security;
 
+import com.project.lovable.enums.ProjectPermission;
 import com.project.lovable.enums.ProjectRole;
 import com.project.lovable.repository.ProjectMemberRepository;
 import lombok.AccessLevel;
@@ -15,19 +16,29 @@ public class SecurityExpressions {
     AuthUtil authUtil;
 
     public boolean canViewProject(Long projectId){
-        Long userId= authUtil.getCurrentUserId();
-        return projectMemberRepository.findRoleByProjectIdAndUserId(projectId,userId)
-                .map(role -> role.equals(ProjectRole.OWNER)
-                                || role.equals(ProjectRole.EDITOR)
-                                || role.equals(ProjectRole.VIEWER))
-                .orElse(false);
+        return hasPermission(projectId, ProjectPermission.VIEW);
     }
 
     public boolean canEditProject(Long projectId){
+        return hasPermission(projectId, ProjectPermission.EDIT);
+    }
+
+    public boolean canDeleteProject(Long projectId){
+        return hasPermission(projectId, ProjectPermission.DELETE);
+    }
+
+    public boolean canViewMember(Long projectId){
+        return hasPermission(projectId, ProjectPermission.VIEW_MEMBER);
+    }
+
+    public boolean canManageMember(Long projectId){
+        return hasPermission(projectId, ProjectPermission.MANAGE_MEMBER);
+    }
+
+    private boolean hasPermission(Long projectId, ProjectPermission permission){
         Long userId= authUtil.getCurrentUserId();
         return projectMemberRepository.findRoleByProjectIdAndUserId(projectId,userId)
-                .map(role -> role.equals(ProjectRole.OWNER)
-                        || role.equals(ProjectRole.EDITOR))
+                .map(role -> role.getPermissions().contains(permission))
                 .orElse(false);
     }
 }
