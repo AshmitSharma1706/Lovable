@@ -8,6 +8,7 @@ import com.project.lovable.entity.ProjectMember;
 import com.project.lovable.entity.ProjectMemberId;
 import com.project.lovable.entity.User;
 import com.project.lovable.enums.ProjectRole;
+import com.project.lovable.error.BadRequestException;
 import com.project.lovable.error.ResourceNotFoundException;
 import com.project.lovable.mapper.ProjectMapper;
 import com.project.lovable.repository.ProjectMemberRepository;
@@ -36,9 +37,15 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
     AuthUtil authUtil;
+    SubscriptionServiceImpl subscriptionService;
 
     @Override
     public ProjectResponse createProject(ProjectRequest request) {
+
+        if(!subscriptionService.canCreateNewProject()){
+            throw new BadRequestException("User cannot create a new project with current plan, Upgrade your plan now...");
+        }
+
         Long userId= authUtil.getCurrentUserId();
         User owner=userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", userId.toString())
