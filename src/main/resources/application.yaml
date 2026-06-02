@@ -25,9 +25,9 @@ jwt:
   secret-key: A9fL3xQe72VhP0mZcT8gWbS1rY6kJ4uNnH5tR2pE0qV7sD3wF9yG6aC8bU1lM4
 
 stripe:
-  secret-key: sk_test_A9fL3xQe72VhP0mZcT8gWbS1rY6kJ4uNnH5tR2pE0qV7sD3wF9yG6aC8bU1lM4
+  secret-key: ${STRIPE_KEY}
   webhook:
-    secret: whsec_1f2beb298b67fc1da93c54082fce1b10a7ecd7f2e09674f3b7e14f646393f1bc
+    secret: ${WEBHOOKS_KEY}
 
 client:
   url: http://localhost:8080

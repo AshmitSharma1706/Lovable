@@ -4,6 +4,7 @@ import com.project.lovable.dto.subscription.SubscriptionResponse;
 import com.project.lovable.entity.Plan;
 import com.project.lovable.entity.Subscription;
 import com.project.lovable.entity.User;
+import com.project.lovable.enums.ProjectRole;
 import com.project.lovable.enums.SubscriptionStatus;
 import com.project.lovable.error.ResourceNotFoundException;
 import com.project.lovable.mapper.SubscriptionMapper;
@@ -145,7 +146,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public boolean canCreateNewProject() {
         Long userId= authUtil.getCurrentUserId();
         SubscriptionResponse currentSubscription=getCurrentSubscription();
-        int countOfOwnedProjects= projectMemberRepository.countProjectOwnedByUser(userId);
+        int countOfOwnedProjects= projectMemberRepository.countProjectOwnedByUser(userId, ProjectRole.OWNER);
 
         if(currentSubscription.plan()==null){
             return countOfOwnedProjects < FREE_TIER_PROJECTS_ALLOWED;

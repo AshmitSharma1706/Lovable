@@ -47,7 +47,7 @@ public class StripePaymentProcessor implements PaymentProcessor {
         );
 
         var params= SessionCreateParams.builder()
-                .addLineItem(SessionCreateParams.LineItem.builder().setPrice(plan.getStripePriceId()).build())
+                .addLineItem(SessionCreateParams.LineItem.builder().setPrice(plan.getStripePriceId()).setQuantity(1L).build())
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .setSubscriptionData(
                         new SessionCreateParams.SubscriptionData.Builder()
@@ -56,8 +56,8 @@ public class StripePaymentProcessor implements PaymentProcessor {
                                                 .build())
                                 .build()
                 )
-                .setSuccessUrl(frontendUrl + "success.html?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl(frontendUrl + "cancel.html")
+                .setSuccessUrl(frontendUrl + "/success.html?session_id={CHECKOUT_SESSION_ID}")
+                .setCancelUrl(frontendUrl + "/cancel.html")
                 .putMetadata("user_id", userId.toString())
                 .putMetadata("plan_id", plan.getId().toString());
 
