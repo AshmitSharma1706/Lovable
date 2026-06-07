@@ -16,13 +16,22 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  ai:
+    openai:
+      api-key: ${OPENAI_KEY}
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: openai/gpt-5.2-codex
+          temperature: 0.0
+
 server:
   servlet:
 #    context-path: /api/v1
   port: ${PORT:8080}
 
 jwt:
-  secret-key: A9fL3xQe72VhP0mZcT8gWbS1rY6kJ4uNnH5tR2pE0qV7sD3wF9yG6aC8bU1lM4
+  secret-key: ${JWT_KEY}
 
 stripe:
   secret-key: ${STRIPE_KEY}
@@ -31,3 +40,14 @@ stripe:
 
 client:
   url: http://localhost:8080
+
+logging:
+  level:
+    org.springframework.ai:
+      chat.client: DEBUG
+
+minio:
+  url: http://localhost:9000          # or minio:9000 if inside docker network
+  access-key: ${ACCESS_KEY}
+  secret-key: ${SECRET_KEY}
+  project-bucket: lovable-ai
