@@ -39,7 +39,7 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     private static final String BUCKET_NAME = "lovable-ai";
 
     @Override
-    public List<FileNode> getFileTree(Long projectId, Long userId) {
+    public List<FileNode> getFileTree(Long projectId) {
         List<ProjectFile> projectFileList = projectFileRepository.findByProjectId(projectId);
         return projectFileMapper.toListOfFileNode(projectFileList);
     }
