@@ -3,6 +3,7 @@ package com.project.lovable.service.impl;
 import com.project.lovable.config.AiConfig;
 import com.project.lovable.llm.PromptUtils;
 import com.project.lovable.llm.advisors.FileTreeContextAdvisor;
+import com.project.lovable.llm.tools.CodeGenerationTools;
 import com.project.lovable.security.AuthUtil;
 import com.project.lovable.service.AiGenerationService;
 import com.project.lovable.service.ProjectFileService;
@@ -42,9 +43,12 @@ public class AiGenerationServiceImpl implements AiGenerationService {
 
         StringBuilder fullResponseBuffer=new StringBuilder();
 
+        CodeGenerationTools codeGenerationTools=new CodeGenerationTools(projectFileService,projectId);
+
         return chatClient.prompt()
                 .system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(userMessage)
+                .tools(codeGenerationTools)
                 .advisors(advisorSpec -> {
                     advisorSpec.params(advisorParams);
                     advisorSpec.advisors(fileTreeContextAdvisor);

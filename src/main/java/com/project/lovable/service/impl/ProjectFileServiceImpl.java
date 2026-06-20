@@ -9,6 +9,7 @@ import com.project.lovable.mapper.ProjectFileMapper;
 import com.project.lovable.repository.ProjectFileRepository;
 import com.project.lovable.repository.ProjectRepository;
 import com.project.lovable.service.ProjectFileService;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,21 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     }
 
     @Override
-    public FileContentResponse getFileContent(Long projectId, String path, Long userId) {
-        return null;
+    public FileContentResponse getFileContent(Long projectId, String path) {
+        String objectName = projectId + "/" + path;
+        try (
+                InputStream is = minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket(BUCKET_NAME)
+                                .object(objectName)
+                                .build())) {
+
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            return new FileContentResponse(path, content);
+        } catch (Exception e) {
+            log.error("Failed to read file: {}/{}", projectId, path, e);
+            throw new RuntimeException("Failed to read file content", e);
+        }
     }
 
     @Override

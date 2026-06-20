@@ -16,6 +16,7 @@ import com.project.lovable.repository.ProjectRepository;
 import com.project.lovable.repository.UserRepository;
 import com.project.lovable.security.AuthUtil;
 import com.project.lovable.service.ProjectService;
+import com.project.lovable.service.ProjectTemplateService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectMemberRepository projectMemberRepository;
     AuthUtil authUtil;
     SubscriptionServiceImpl subscriptionService;
+    ProjectTemplateService projectTemplateService;
 
     @Override
     public ProjectResponse createProject(ProjectRequest request) {
@@ -66,6 +68,8 @@ public class ProjectServiceImpl implements ProjectService {
                 .project(project)
                 .build();
         projectMemberRepository.save(projectMember);
+
+        projectTemplateService.initializeProjectFromTemplate(project.getId());
 
         return projectMapper.toProjectResponse(project);
     }
