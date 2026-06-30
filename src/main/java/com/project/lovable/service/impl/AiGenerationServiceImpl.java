@@ -1,6 +1,7 @@
 package com.project.lovable.service.impl;
 
 import com.project.lovable.config.AiConfig;
+import com.project.lovable.dto.chat.StreamResponse;
 import com.project.lovable.entity.*;
 import com.project.lovable.enums.ChatEventType;
 import com.project.lovable.enums.MessageRole;
@@ -50,7 +51,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
 
     @Override
     @PreAuthorize("@security.canEditProject(#projectId)")
-    public Flux<String> streamResponse(String userMessage, Long projectId) {
+    public Flux<StreamResponse> streamResponse(String userMessage, Long projectId) {
         Long userId= authUtil.getCurrentUserId();
         ChatSession chatSession =createChatSessionIfNotExists(projectId, userId);
         Map<String, Object> advisorParams=Map.of(
@@ -77,11 +78,19 @@ public class AiGenerationServiceImpl implements AiGenerationService {
                 )
                 .stream()
                 .chatResponse()
-                .doOnNext(chatResponse -> {
-                        String content=chatResponse.getResult().getOutput().getText();
-                    fullResponseBuffer.append(content);
+                .doOnNext(response -> {
+                    String content = response.getResult().getOutput().getText();
+
+                    if(content != null && !content.isEmpty() && endTime.get() == 0) { // first non-empty chunk received
+                        endTime.set(System.currentTimeMillis());
                     }
-                )
+
+                    if(response.getMetadata().getUsage() != null) {
+                        usageRef.set(response.getMetadata().getUsage());
+                    }
+
+                    fullResponseBuffer.append(content);
+                })
                 .doOnComplete(() -> {
                     Schedulers.boundedElastic().schedule(() ->{
                                 long duration = (endTime.get() - startTime.get()) /  1000;
@@ -91,7 +100,10 @@ public class AiGenerationServiceImpl implements AiGenerationService {
                     }
                 )
                 .doOnError(error -> log.error("Error during streaming for projectId: {}", projectId))
-                .map(chatResponse -> chatResponse.getResult().getOutput().getText());
+                .map(response -> {
+                    String text = response.getResult().getOutput().getText();
+                    return new StreamResponse(text != null ? text : "");
+                });
     }
 
     private void finalizeChats(String userMessage, ChatSession chatSession, String fullText, Long duration, Usage usage) {

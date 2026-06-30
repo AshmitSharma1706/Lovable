@@ -2,6 +2,7 @@ package com.project.lovable.service.impl;
 
 import com.project.lovable.dto.project.FileContentResponse;
 import com.project.lovable.dto.project.FileNode;
+import com.project.lovable.dto.project.FileTreeResponse;
 import com.project.lovable.entity.Project;
 import com.project.lovable.entity.ProjectFile;
 import com.project.lovable.error.ResourceNotFoundException;
@@ -40,9 +41,10 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     private static final String BUCKET_NAME = "lovable-ai";
 
     @Override
-    public List<FileNode> getFileTree(Long projectId) {
+    public FileTreeResponse getFileTree(Long projectId) {
         List<ProjectFile> projectFileList = projectFileRepository.findByProjectId(projectId);
-        return projectFileMapper.toListOfFileNode(projectFileList);
+        List<FileNode> projectFileNodes= projectFileMapper.toListOfFileNode(projectFileList);
+        return new FileTreeResponse(projectFileNodes);
     }
 
     @Override
