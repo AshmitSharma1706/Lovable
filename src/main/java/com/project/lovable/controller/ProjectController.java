@@ -1,8 +1,10 @@
 package com.project.lovable.controller;
 
+import com.project.lovable.dto.deploy.DeployResponse;
 import com.project.lovable.dto.project.ProjectRequest;
 import com.project.lovable.dto.project.ProjectResponse;
 import com.project.lovable.dto.project.ProjectSummaryResponse;
+import com.project.lovable.service.DeploymentService;
 import com.project.lovable.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final DeploymentService deploymentService;
 
     @PostMapping("create")
     public ResponseEntity<ProjectResponse> createProject(@RequestBody @Valid ProjectRequest request) {
@@ -43,6 +46,11 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
         projectService.softDelete(projectId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{projectId}/deploy")
+    public ResponseEntity<DeployResponse> deployProject(@PathVariable Long projectId) {
+        return ResponseEntity.ok(deploymentService.deploy(projectId));
     }
 
 }
