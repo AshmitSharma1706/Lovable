@@ -80,6 +80,8 @@ public class KubernetesDeploymentServiceImpl implements DeploymentService {
             String startCmd = "npm install && nohup npm run dev -- --host 0.0.0.0 --port 5173 > /app/dev.log 2>&1 &";
 
             log.info("Starting dev server for project {}...", projectId);
+            log.info("Initial sync command: {}", initialSyncCmd);
+            log.info("Watch command: {}", watchCmd);
             execCommand(podName, RUNNER_CONTAINER, "sh", "-c", startCmd);
 
 //            registerRoute(domain, pod);
