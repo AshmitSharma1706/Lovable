@@ -22,14 +22,17 @@ spring:
       port: 6379
 
   ai:
+    model.chat: openai
     openai:
       api-key: ${OPENAI_KEY}
       base-url: https://openrouter.ai/api
       chat:
         options:
-#          model: openai/gpt-5.2-codex
           model: google/gemini-3-flash-preview
           temperature: 0.0
+      embedding:
+        options:
+          model: qwen/qwen3-embedding-8b
 
 server:
   servlet:
