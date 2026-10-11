@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
 
   kafka:
-    image: docker.io/confluentinc/cp-kafka:7.5.0
+    image: docker.io/confluentinc/confluent-local:7.5.0
     container_name: kafka-lovable
     ports:
       - "9092:9092"       # Internal/Docker port (if needed)
